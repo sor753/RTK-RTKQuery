@@ -1,23 +1,25 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import type { RootState, AppDispatch } from '../store';
 
-export const getPost = createAsyncThunk('post/getPost', async ({ id }: { id: number }) => {
+export const getPost = createAsyncThunk<Post, { id: number }, { state: RootState; dispatch: AppDispatch; rejectValue: string }>('post/getPost', async ({ id }) => {
   const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
   const data = await response.json();
   return data;
 });
 
-type initialState = {
-  post: {
-    userId: number;
-    id: number;
-    title: string;
-    body: string;
-  }[];
+type Post = {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+};
+type InitialState = {
+  post: Post[];
   loading: boolean;
   error: string | null;
 };
 
-const initialState: initialState = {
+const initialState: InitialState = {
   post: [],
   loading: false,
   error: null,
