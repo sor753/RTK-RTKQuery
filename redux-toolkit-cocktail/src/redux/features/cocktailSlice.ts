@@ -34,7 +34,19 @@ export const fetchSingleCocktail = createAsyncThunk<
     rejectValue: { message: string };
   }
 >('cocktails/fetchSingleCocktail', async ({ id }) => {
-  return fetch(`https://www.thecocktaildb.com/api/json/v2/1/search.php?s=${id}`).then((res) => res.json());
+  return fetch(`https://www.thecocktaildb.com/api/json/v2/1/search.php?i=${id}`).then((res) => res.json());
+});
+
+export const fetchSearchCocktail = createAsyncThunk<
+  InitialState,
+  { searchText: string },
+  {
+    state: RootState;
+    dispatch: AppDispatch;
+    rejectValue: { message: string };
+  }
+>('cocktails/fetchSearchCocktail', async ({ searchText }) => {
+  return fetch(`https://www.thecocktaildb.com/api/json/v2/1/search.php?s=${searchText}`).then((res) => res.json());
 });
 
 const initialState: InitialState = {
@@ -73,6 +85,19 @@ export const { actions: cocktailActions, reducer: cocktailReducer } = createSlic
       state.error = null;
     });
     builder.addCase(fetchSingleCocktail.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload?.message || '予期せぬエラー';
+    });
+    // fetchSearchCocktail
+    builder.addCase(fetchSearchCocktail.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(fetchSearchCocktail.fulfilled, (state, action) => {
+      state.drinks = action.payload.drinks;
+      state.loading = false;
+      state.error = null;
+    });
+    builder.addCase(fetchSearchCocktail.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload?.message || '予期せぬエラー';
     });

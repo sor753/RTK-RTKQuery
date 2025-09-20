@@ -33,6 +33,10 @@ const CocktailList = () => {
     );
   }
 
+  if (!drinks) {
+    return <h2>No Cocktails matched your search criteria</h2>;
+  }
+
   if (!modifiedCocktail || modifiedCocktail.length < 1) {
     return <h2 className="section-title">No cocktails matched your search criteria</h2>;
   }
