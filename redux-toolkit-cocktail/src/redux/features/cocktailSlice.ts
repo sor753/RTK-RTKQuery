@@ -22,7 +22,7 @@ export const fetchCocktails = createAsyncThunk<
     rejectValue: { message: string };
   }
 >('cocktails/fetchCocktails', async () => {
-  return fetch('https://www.thecocktaildb.com/api/json/v1/1/search.php?s=').then((res) => res.json());
+  return fetch('https://www.thecocktaildb.com/api/json/v2/1/search.php?s=').then((res) => res.json());
 });
 
 const initialState: InitialState = {
@@ -42,6 +42,8 @@ export const { actions: cocktailActions, reducer: cocktailReducer } = createSlic
     });
     builder.addCase(fetchCocktails.fulfilled, (state, action) => {
       state.drinks = action.payload.drinks;
+      state.loading = false;
+      state.error = null;
     });
     builder.addCase(fetchCocktails.rejected, (state, action) => {
       state.loading = false;

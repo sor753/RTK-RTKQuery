@@ -1,10 +1,11 @@
+import CocktailList from '../components/CocktailList';
 import SearchInput from '../components/SearchInput';
 
 const Home = () => {
   return (
     <div>
       <SearchInput />
-      {/* Cocktail List */}
+      <CocktailList />
     </div>
   );
 };
