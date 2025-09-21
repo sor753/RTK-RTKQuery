@@ -49,6 +49,14 @@ const Home = () => {
                 <p>User Id: {post[0].userId}</p>
                 <span>{post[0].body}</span>
               </Card>
+              <Space size="middle" style={{ marginTop: 35, marginLeft: 5, float: 'right' }}>
+                <Button style={{ cursor: 'pointer' }} type="primary" danger>
+                  Delete
+                </Button>
+                <Button style={{ cursor: 'pointer' }} type="primary">
+                  Edit
+                </Button>
+              </Space>
             </div>
           )}
         </>
