@@ -13,6 +13,19 @@ export const deletePost = createAsyncThunk<Post, { id: number }, { state: RootSt
   return data;
 });
 
+export const createPost = createAsyncThunk<Post, { values: Post }, { state: RootState; dispatch: AppDispatch; rejectValue: string }>('post/createPost', async ({ values }) => {
+  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/`, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ title: values.title, body: values.body }),
+  });
+  const data = await response.json();
+  return data;
+});
+
 type Post = {
   userId: number;
   id: number;
@@ -60,6 +73,20 @@ export const { actions: postActions, reducer: postReducer } = createSlice({
       state.error = null;
     });
     builder.addCase(deletePost.rejected, (state, action) => {
+      state.loading = false;
+      state.post = [];
+      state.error = action.error.message || 'Something went wrong';
+    });
+    // createPost
+    builder.addCase(createPost.pending, (state) => {
+      state.loading = true;
+    });
+    builder.addCase(createPost.fulfilled, (state, action) => {
+      state.loading = false;
+      state.post = [action.payload];
+      state.error = null;
+    });
+    builder.addCase(createPost.rejected, (state, action) => {
       state.loading = false;
       state.post = [];
       state.error = action.error.message || 'Something went wrong';
