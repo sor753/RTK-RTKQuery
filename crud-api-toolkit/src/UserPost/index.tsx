@@ -2,7 +2,7 @@ import { Button, Card, Input, Space } from 'antd';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getPost } from '../redux/features/postSlice';
+import { deletePost, getPost } from '../redux/features/postSlice';
 import type { AppDispatch, RootState } from '../redux/store';
 import LoadingCard from './LoadingCard';
 
@@ -50,7 +50,7 @@ const Home = () => {
                 <span>{post[0].body}</span>
               </Card>
               <Space size="middle" style={{ marginTop: 35, marginLeft: 5, float: 'right' }}>
-                <Button style={{ cursor: 'pointer' }} type="primary" danger>
+                <Button style={{ cursor: 'pointer' }} type="primary" danger onClick={() => dispatch(deletePost({ id: post[0].id }))}>
                   Delete
                 </Button>
                 <Button style={{ cursor: 'pointer' }} type="primary">
