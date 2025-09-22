@@ -40,18 +40,21 @@ export const deletePost = createAsyncThunk<Post, { id: number }, { state: RootSt
   return data;
 });
 
-export const createPost = createAsyncThunk<Post, { values: Post }, { state: RootState; dispatch: AppDispatch; rejectValue: string }>('post/createPost', async ({ values }) => {
-  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/`, {
-    method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ title: values.title, body: values.body }),
-  });
-  const data = await response.json();
-  return data;
-});
+export const createPost = createAsyncThunk<Post, { values: { title: string; body: string } }, { state: RootState; dispatch: AppDispatch; rejectValue: string }>(
+  'post/createPost',
+  async ({ values }) => {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/`, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title: values.title, body: values.body }),
+    });
+    const data = await response.json();
+    return data;
+  }
+);
 
 const isRejectedAction = (action: Action): action is RejectedAction => {
   return action.type.endsWith('rejected');
