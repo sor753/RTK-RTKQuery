@@ -1,10 +1,37 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, type Action } from '@reduxjs/toolkit';
 import type { RootState, AppDispatch } from '../store';
 
-export const getPost = createAsyncThunk<Post, { id: number }, { state: RootState; dispatch: AppDispatch; rejectValue: string }>('post/getPost', async ({ id }) => {
-  const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
-  const data = await response.json();
-  return data;
+interface RejectedAction extends Action {
+  error: Error;
+  payload: string;
+}
+
+type Post = {
+  userId: number;
+  id: number;
+  title: string;
+  body: string;
+};
+type InitialState = {
+  post: Post[];
+  loading: boolean;
+  error: string | null;
+};
+
+export const getPost = createAsyncThunk<Post, { id: number }, { state: RootState; dispatch: AppDispatch; rejectValue: string }>('post/getPost', async ({ id }, { rejectWithValue }) => {
+  try {
+    const response = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    const data = await response.json();
+    return data;
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      return rejectWithValue(err.message);
+    }
+    return rejectWithValue('An unknown error occurred');
+  }
 });
 
 export const deletePost = createAsyncThunk<Post, { id: number }, { state: RootState; dispatch: AppDispatch; rejectValue: string }>('post/deletePost', async ({ id }) => {
@@ -26,16 +53,12 @@ export const createPost = createAsyncThunk<Post, { values: Post }, { state: Root
   return data;
 });
 
-type Post = {
-  userId: number;
-  id: number;
-  title: string;
-  body: string;
+const isRejectedAction = (action: Action): action is RejectedAction => {
+  return action.type.endsWith('rejected');
 };
-type InitialState = {
-  post: Post[];
-  loading: boolean;
-  error: string | null;
+
+const isPendingAction = (action: Action): boolean => {
+  return action.type.endsWith('pending');
 };
 
 const initialState: InitialState = {
@@ -50,46 +73,33 @@ export const { actions: postActions, reducer: postReducer } = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     // getPost
-    builder.addCase(getPost.pending, (state) => {
-      state.loading = true;
-    });
     builder.addCase(getPost.fulfilled, (state, action) => {
       state.loading = false;
       state.post = [action.payload];
       state.error = null;
     });
-    builder.addCase(getPost.rejected, (state, action) => {
-      state.loading = false;
-      state.post = [];
-      state.error = action.error.message || 'Something went wrong';
-    });
     // deletePost
-    builder.addCase(deletePost.pending, (state) => {
-      state.loading = true;
-    });
     builder.addCase(deletePost.fulfilled, (state) => {
       state.loading = false;
       state.post = [];
       state.error = null;
     });
-    builder.addCase(deletePost.rejected, (state, action) => {
-      state.loading = false;
-      state.post = [];
-      state.error = action.error.message || 'Something went wrong';
-    });
     // createPost
-    builder.addCase(createPost.pending, (state) => {
-      state.loading = true;
-    });
     builder.addCase(createPost.fulfilled, (state, action) => {
       state.loading = false;
       state.post = [action.payload];
       state.error = null;
     });
-    builder.addCase(createPost.rejected, (state, action) => {
+    // pending
+    builder.addMatcher(isPendingAction, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    // error
+    builder.addMatcher(isRejectedAction, (state, action) => {
       state.loading = false;
       state.post = [];
-      state.error = action.error.message || 'Something went wrong';
+      state.error = action.payload || 'Something went wrong';
     });
   },
 });
