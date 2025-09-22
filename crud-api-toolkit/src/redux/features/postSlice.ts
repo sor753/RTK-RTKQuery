@@ -94,7 +94,7 @@ export const { actions: postActions, reducer: postReducer } = createSlice({
   name: 'post',
   initialState,
   reducers: {
-    setEdit: (state: InitialState, action: PayloadAction<InitialState>) => {
+    setEdit: (state: InitialState, action: PayloadAction<{ edit: boolean; body: string }>) => {
       state.edit = action.payload.edit;
       state.body = action.payload.body;
     },
