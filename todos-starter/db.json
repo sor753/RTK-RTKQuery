@@ -8,17 +8,12 @@
     {
       "id": "2",
       "title": "Watching Movie",
-      "completed": true
+      "completed": false
     },
     {
       "title": "Reading Book",
       "completed": false,
       "id": "3"
-    },
-    {
-      "id": "610b",
-      "title": "AAAAA",
-      "completed": false
     }
   ]
 }

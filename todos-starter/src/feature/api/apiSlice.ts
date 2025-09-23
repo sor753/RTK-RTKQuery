@@ -21,6 +21,11 @@ export const apiSlice = createApi({
   baseQuery:
     // fetchによるHTTPリクエストを簡素化することを目的とした非常に小さなラッパー
     fetchBaseQuery({ baseUrl: 'http://localhost:5000' }),
+  // 文字列タグタイプ名の配列。
+  // タグタイプの指定は任意ですが、キャッシュや無効化に使用できるように定義する必要があります。
+  // タグタイプを定義すると、エンドポイントの設定時にprovidesTagsでタグタイプを指定したり、
+  // invalidatesTagsで無効化したりできるようになります。
+  tagTypes: ['Todo'],
   // サーバーに対して実行する一連の操作です。
   // ビルダー構文を使用してオブジェクトとして定義します。
   // エンドポイントにはquery、infiniteQuery、mutationの3つの種類があります。
@@ -28,6 +33,7 @@ export const apiSlice = createApi({
     // https://github.com/reduxjs/redux-toolkit/issues/1676
     getTodos: builder.query<Todo[], void>({
       query: () => '/todos',
+      providesTags: ['Todo'],
     }),
     // ミューテーション エンドポイント (build.mutation()で定義) は、
     // サーバーに更新を送信し、クエリ エンドポイントの無効化と再フェッチを強制するために使用されます。
@@ -38,6 +44,7 @@ export const apiSlice = createApi({
         method: 'POST',
         body,
       }),
+      invalidatesTags: ['Todo'],
     }),
     updateTodo: builder.mutation<Todo, Todo>({
       query: (body) => ({
@@ -45,12 +52,14 @@ export const apiSlice = createApi({
         method: 'PATCH',
         body,
       }),
+      invalidatesTags: ['Todo'],
     }),
     deleteTodo: builder.mutation<{ success: boolean; id: number }, number>({
       query: (id) => ({
         url: `/todos/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['Todo'],
     }),
   }),
 });
