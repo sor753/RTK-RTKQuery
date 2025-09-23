@@ -4,10 +4,12 @@ import { type Contact } from "../model/contact.model"
 export const contactApi = createApi({
   reducerPath: "contactApi",
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000" }),
+  tagTypes: ["Contacts"],
   endpoints: builder => ({
     // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
     contacts: builder.query<Contact[], void>({
       query: () => "/contacts",
+      providesTags: ["Contacts"],
     }),
     // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
     addContact: builder.mutation<void, Contact>({
@@ -16,8 +18,21 @@ export const contactApi = createApi({
         method: "POST",
         body: contact,
       }),
+      invalidatesTags: ["Contacts"],
+    }),
+    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+    deleteContact: builder.mutation<void, string>({
+      query: id => ({
+        url: `/contacts/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["Contacts"],
     }),
   }),
 })
 
-export const { useContactsQuery, useAddContactMutation } = contactApi
+export const {
+  useContactsQuery,
+  useAddContactMutation,
+  useDeleteContactMutation,
+} = contactApi
