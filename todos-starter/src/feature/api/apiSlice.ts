@@ -33,6 +33,7 @@ export const apiSlice = createApi({
     // https://github.com/reduxjs/redux-toolkit/issues/1676
     getTodos: builder.query<Todo[], void>({
       query: () => '/todos',
+      transformResponse: (response: Todo[]) => response.sort((a, b) => b.id - a.id),
       providesTags: ['Todo'],
     }),
     // ミューテーション エンドポイント (build.mutation()で定義) は、
