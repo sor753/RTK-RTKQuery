@@ -15,4 +15,6 @@ export const store = configureStore({
     getDefaultMiddleware().concat(usersApi.middleware),
 })
 
+// ページがフォーカスされたときやネットワークに再接続したときに、自動的にデータを再取得できるようになります。
+// 重要なのは、別のアプリでページ外にいて、戻ってきたときに、ユーザーが最新の情報を確認できるようにすることです
 setupListeners(store.dispatch)
