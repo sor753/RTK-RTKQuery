@@ -1,0 +1,22 @@
+{
+  "contacts": [
+    {
+      "name": "Adam Marcus",
+      "email": "adam.marcus@example.com",
+      "contact": "123-456-7890",
+      "id": 1
+    },
+    {
+      "name": "Eve Thompson",
+      "email": "eve.thompson@example.com",
+      "contact": "987-654-3210",
+      "id": 2
+    },
+    {
+      "name": "John Doe",
+      "email": "john.doe@example.com",
+      "contact": "555-555-5555",
+      "id": 3
+    }
+  ]
+}
