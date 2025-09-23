@@ -2,7 +2,11 @@ import { useEffect, useState } from "react"
 import { type Contact } from "../model/contact.model"
 import { useNavigate, useParams } from "react-router-dom"
 import "./AddEdit.css"
-import { useContactQuery, useAddContactMutation } from "../services/contactApi"
+import {
+  useContactQuery,
+  useAddContactMutation,
+  useUpdateContactMutation,
+} from "../services/contactApi"
 import { toast } from "react-toastify"
 
 const initialState: Contact = {
@@ -16,12 +20,13 @@ const AddEdit = () => {
   const { id } = useParams()
 
   const [addContact] = useAddContactMutation()
-  const { data, error } = useContactQuery(id ?? "")
-  console.log(data)
+  const [updateContact] = useUpdateContactMutation()
+  const { data, error } = useContactQuery(id)
 
   const [editMode, setEditMode] = useState(false)
   const [formValue, setFormValue] = useState(initialState)
-  const { name, email, contact } = formValue
+
+  console.log(editMode)
 
   useEffect(() => {
     if (error) {
@@ -31,6 +36,8 @@ const AddEdit = () => {
 
   useEffect(() => {
     if (data) {
+      console.log(data)
+
       setEditMode(true)
       setFormValue({ ...data })
     } else {
@@ -45,12 +52,25 @@ const AddEdit = () => {
   }
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    if (!name && !email && !contact) {
+    if (!formValue.name && !formValue.email && !formValue.contact) {
       toast.error("Please provide value into each input field")
     } else {
-      await addContact(formValue)
-      void navigate("/")
-      toast.success("Contact Added Successfully")
+      if (!editMode) {
+        await addContact(formValue)
+        void navigate("/")
+        toast.success("Contact Added Successfully")
+      } else {
+        const value: Required<Contact> = {
+          name: formValue.name,
+          email: formValue.email,
+          contact: formValue.contact,
+          id: formValue.id ?? "",
+        }
+        await updateContact(value)
+        void navigate("/")
+        setEditMode(false)
+        toast.success("Contact Updated Successfully")
+      }
     }
   }
 
@@ -73,7 +93,7 @@ const AddEdit = () => {
           id="name"
           name="name"
           placeholder="Enter Name ..."
-          value={name}
+          value={formValue.name}
           onChange={handleInputChange}
         />
         <label htmlFor="email">Email</label>
@@ -82,7 +102,7 @@ const AddEdit = () => {
           id="email"
           name="email"
           placeholder="Enter Email ..."
-          value={email}
+          value={formValue.email}
           onChange={handleInputChange}
         />
         <label htmlFor="contact">Contact</label>
@@ -91,10 +111,10 @@ const AddEdit = () => {
           id="contact"
           name="contact"
           placeholder="Enter Contact no. ..."
-          value={contact}
+          value={formValue.contact}
           onChange={handleInputChange}
         />
-        <input type="submit" value="Add" />
+        <input type="submit" value={editMode ? "Update" : "Add"} />
       </form>
     </div>
   )

@@ -32,6 +32,14 @@ export const contactApi = createApi({
       }),
       invalidatesTags: ["Contacts"],
     }),
+    updateContact: builder.mutation<Contact, Required<Contact>>({
+      query: body => ({
+        url: `/contacts/${body.id}`,
+        method: "PUT",
+        body,
+      }),
+      invalidatesTags: ["Contacts"],
+    }),
   }),
 })
 
@@ -40,4 +48,5 @@ export const {
   useContactQuery,
   useAddContactMutation,
   useDeleteContactMutation,
+  useUpdateContactMutation,
 } = contactApi
