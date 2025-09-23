@@ -6,10 +6,10 @@ export const contactApi = createApi({
   baseQuery: fetchBaseQuery({ baseUrl: "http://localhost:5000" }),
   endpoints: builder => ({
     // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-    getContacts: builder.query<Contact[], void>({
+    contacts: builder.query<Contact[], void>({
       query: () => "/contacts",
     }),
   }),
 })
 
-export const { useGetContactsQuery } = contactApi
+export const { useContactsQuery } = contactApi
