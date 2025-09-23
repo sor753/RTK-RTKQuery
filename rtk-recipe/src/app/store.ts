@@ -1,36 +1,37 @@
 import type { Action, ThunkAction } from "@reduxjs/toolkit"
 import { combineSlices, configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/query"
+import { recipeApi } from "../services/recipeApi"
 
-// `combineSlices` automatically combines the reducers using
-// their `reducerPath`s, therefore we no longer need to call `combineReducers`.
-const rootReducer = combineSlices()
-// Infer the `RootState` type from the root reducer
+// `combineSlices` は `reducerPath` を使用してリデューサーを自動的に結合するため、
+// `combineReducers` を呼び出す必要がなくなりました。
+const rootReducer = combineSlices(recipeApi)
+// root reducer から `RootState` 型を推論する
 export type RootState = ReturnType<typeof rootReducer>
 
-// The store setup is wrapped in `makeStore` to allow reuse
-// when setting up tests that need the same store config
+// ストアのセットアップは `makeStore` でラップされており、
+// 同じストア構成を必要とするテストをセットアップするときに再利用できます。
 export const makeStore = (preloadedState?: Partial<RootState>) => {
   const store = configureStore({
     reducer: rootReducer,
-    // Adding the api middleware enables caching, invalidation, polling,
-    // and other useful features of `rtk-query`.
-    // middleware: getDefaultMiddleware => {
-    //   return getDefaultMiddleware().concat(quotesApiSlice.middleware)
-    // },
+    // api ミドルウェアを追加すると、キャッシュ、無効化、ポーリング、
+    // および `rtk-query` のその他の便利な機能が有効になります。
+    middleware: getDefaultMiddleware => {
+      return getDefaultMiddleware().concat(recipeApi.middleware)
+    },
     preloadedState,
   })
-  // configure listeners using the provided defaults
-  // optional, but required for `refetchOnFocus`/`refetchOnReconnect` behaviors
+  // 提供されたデフォルトを使用してリスナーを構成する（オプション）が、
+  // `refetchOnFocus`/`refetchOnReconnect` 動作には必須である
   setupListeners(store.dispatch)
   return store
 }
 
 export const store = makeStore()
 
-// Infer the type of `store`
+// `store` のタイプを推測する
 export type AppStore = typeof store
-// Infer the `AppDispatch` type from the store itself
+// ストア自体から `AppDispatch` 型を推測する
 export type AppDispatch = AppStore["dispatch"]
 export type AppThunk<ThunkReturnType = void> = ThunkAction<
   ThunkReturnType,
