@@ -9,7 +9,15 @@ export const contactApi = createApi({
     contacts: builder.query<Contact[], void>({
       query: () => "/contacts",
     }),
+    // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+    addContact: builder.mutation<void, Contact>({
+      query: contact => ({
+        url: "/contacts",
+        method: "POST",
+        body: contact,
+      }),
+    }),
   }),
 })
 
-export const { useContactsQuery } = contactApi
+export const { useContactsQuery, useAddContactMutation } = contactApi
