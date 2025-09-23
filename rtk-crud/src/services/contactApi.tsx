@@ -11,6 +11,10 @@ export const contactApi = createApi({
       query: () => "/contacts",
       providesTags: ["Contacts"],
     }),
+    contact: builder.query<Contact, string>({
+      query: id => `/contacts/${id}`,
+      providesTags: ["Contacts"],
+    }),
     // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
     addContact: builder.mutation<void, Contact>({
       query: contact => ({
@@ -33,6 +37,7 @@ export const contactApi = createApi({
 
 export const {
   useContactsQuery,
+  useContactQuery,
   useAddContactMutation,
   useDeleteContactMutation,
 } = contactApi
