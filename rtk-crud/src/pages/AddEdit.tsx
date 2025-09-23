@@ -2,6 +2,8 @@ import { useState } from "react"
 import { type Contact } from "../model/contact.model"
 import { useNavigate } from "react-router-dom"
 import "./AddEdit.css"
+import { useAddContactMutation } from "../services/contactApi"
+import { toast } from "react-toastify"
 
 const initialState: Contact = {
   name: "",
@@ -12,11 +14,25 @@ const initialState: Contact = {
 const AddEdit = () => {
   const navigate = useNavigate()
 
+  const [addContact] = useAddContactMutation()
+
   const [formValue, setFormValue] = useState(initialState)
   const { name, email, contact } = formValue
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {}
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {}
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setFormValue({ ...formValue, [name]: value })
+  }
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!name && !email && !contact) {
+      toast.error("Please provide value into each input field")
+    } else {
+      await addContact(formValue)
+      void navigate("/")
+      toast.success("Contact Added Successfully")
+    }
+  }
 
   return (
     <div style={{ marginTop: "100px" }}>
@@ -27,7 +43,9 @@ const AddEdit = () => {
           maxWidth: "400px",
           alignContent: "center",
         }}
-        onSubmit={handleSubmit}
+        onSubmit={e => {
+          void handleSubmit(e)
+        }}
       >
         <label htmlFor="name">Name</label>
         <input
