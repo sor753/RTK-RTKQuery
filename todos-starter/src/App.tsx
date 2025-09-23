@@ -1,15 +1,20 @@
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import './App.css';
-import { useGetTodosQuery } from './feature/api/apiSlice';
+import { useAddTodoMutation, useDeleteTodoMutation, useGetTodosQuery, useUpdateTodoMutation } from './feature/api/apiSlice';
 
 function App() {
   const { data: todos, isLoading, isSuccess, isError, error } = useGetTodosQuery();
+  const [addTodo] = useAddTodoMutation();
+  const [updateTodo] = useUpdateTodoMutation();
+  const [deleteTodo] = useDeleteTodoMutation();
+
   const [todo, setTodo] = useState('');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (todo) {
       // logic to add todo using RTK Query
+      addTodo({ title: todo, completed: false });
       setTodo('');
     }
   };
@@ -21,14 +26,16 @@ function App() {
   } else if (isSuccess) {
     content = todos.map((todo) => {
       return (
-        <>
+        <Fragment key={todo.id}>
           <ul>
-            <li className={todo.completed ? 'checked' : ''}>
+            <li className={todo.completed ? 'checked' : ''} onClick={() => updateTodo({ ...todo, completed: !todo.completed })}>
               {todo.title}
-              <span className="close">x</span>
+              <span className="close" onClick={() => deleteTodo(todo.id)}>
+                x
+              </span>
             </li>
           </ul>
-        </>
+        </Fragment>
       );
     });
   } else if (isError) {
