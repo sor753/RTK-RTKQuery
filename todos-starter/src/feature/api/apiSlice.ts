@@ -29,8 +29,31 @@ export const apiSlice = createApi({
     getTodos: builder.query<Todo[], void>({
       query: () => '/todos',
     }),
+    // ミューテーション エンドポイント (build.mutation()で定義) は、
+    // サーバーに更新を送信し、クエリ エンドポイントの無効化と再フェッチを強制するために使用されます。
+    // クエリと同様に、queryオプションまたはqueryFn非同期メソッドのいずれかを指定する必要があります。
+    addTodo: builder.mutation<Todo, Partial<Todo>>({
+      query: (body) => ({
+        url: '/todos',
+        method: 'POST',
+        body,
+      }),
+    }),
+    updateTodo: builder.mutation<Todo, Todo>({
+      query: (body) => ({
+        url: `/todos/${body.id}`,
+        method: 'PATCH',
+        body,
+      }),
+    }),
+    deleteTodo: builder.mutation<{ success: boolean; id: number }, number>({
+      query: (id) => ({
+        url: `/todos/${id}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
 });
 
 // 定義されたエンドポイントに基づいて自動生成される関数コンポーネントで使用するためのエクスポートフック
-export const { useGetTodosQuery } = apiSlice;
+export const { useGetTodosQuery, useAddTodoMutation, useUpdateTodoMutation, useDeleteTodoMutation } = apiSlice;
