@@ -3,11 +3,13 @@ import "./App.css"
 import Home from "./pages/Home"
 import AddEdit from "./pages/AddEdit"
 import Info from "./pages/Info"
+import { ToastContainer } from "react-toastify"
 
 const App = () => {
   return (
     <div className="App">
       <BrowserRouter>
+        <ToastContainer />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/addContact" element={<AddEdit />} />

@@ -1,9 +1,18 @@
 import { Link } from "react-router-dom"
 import { useContactsQuery } from "../services/contactApi"
 import "./Home.css"
+import { useEffect } from "react"
+import { toast } from "react-toastify"
 
 const Home = () => {
   const { data, error, isLoading } = useContactsQuery()
+  console.log(error)
+
+  useEffect(() => {
+    if (error) {
+      toast.error("Something went wrong!")
+    }
+  }, [error])
 
   if (isLoading) {
     return <div>Loading...</div>
