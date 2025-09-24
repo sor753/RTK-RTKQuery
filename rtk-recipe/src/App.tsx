@@ -1,11 +1,21 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import "./App.css"
+import { useGetRecipesMutation } from "./services/recipeApi"
+import Card from "./components/Card"
 
 export const App = () => {
   const [value, setValue] = useState("")
-  const [query, setQuery] = useState("")
+  const [query, setQuery] = useState("coffee")
   const [show, setShow] = useState(false)
   const [recipes, setRecipes] = useState({})
+
+  const [getRecipes, { isLoading, data }] = useGetRecipesMutation()
+
+  useEffect(() => {
+    void (async () => {
+      await getRecipes(query)
+    })()
+  }, [query, getRecipes])
 
   return (
     <div
@@ -34,6 +44,11 @@ export const App = () => {
         <div className="col-auto">
           <button>Search</button>
         </div>
+      </div>
+      <div className="row-cols-1 row-cols-md-3 g-4">
+        {data?.hits?.map((item, index) => (
+          <Card key={index} recipe={item.recipe} />
+        ))}
       </div>
     </div>
   )
