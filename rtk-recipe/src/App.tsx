@@ -58,7 +58,11 @@ export const App = () => {
   const [query, setQuery] = useState("coffee")
   const [health, setHealth] = useState<HealthValue>("vegan")
   const [show, setShow] = useState(false)
-  const [recipes, setRecipes] = useState({})
+  const [recipe, setRecipe] = useState<Recipe>({
+    label: "",
+    image: "",
+    calories: 0,
+  })
 
   const [getRecipes, { isLoading, data }] = useGetRecipesMutation()
 
@@ -81,9 +85,9 @@ export const App = () => {
     setHealth(e.target.value as HealthValue)
   }
 
-  const toggleShow = (recipes: Recipe) => {
+  const toggleShow = (recipe: Recipe): void => {
     setShow(!show)
-    setRecipes(recipes)
+    setRecipe(recipe)
   }
 
   return (
@@ -133,9 +137,7 @@ export const App = () => {
           <Card key={index} toggleShow={toggleShow} recipe={item.recipe} />
         ))}
       </div>
-      {show && (
-        <Modal recipe={recipes as Recipe} setShow={setShow} show={show} />
-      )}
+      {show && <Modal recipe={recipe} setShow={setShow} show={show} />}
     </div>
   )
 }
