@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import "./App.css"
 import { useGetRecipesMutation } from "./services/recipeApi"
 import Card from "./components/Card"
+import Spinner from "./components/Spinner"
 
 export const App = () => {
   const [value, setValue] = useState("")
@@ -16,6 +17,15 @@ export const App = () => {
       await getRecipes(query)
     })()
   }, [query, getRecipes])
+
+  if (isLoading) {
+    return <Spinner />
+  }
+
+  const handleSearch = () => {
+    setQuery(value ? value : "coffee")
+    setValue("")
+  }
 
   return (
     <div
@@ -42,11 +52,11 @@ export const App = () => {
           }}
         />
         <div className="col-auto">
-          <button>Search</button>
+          <button onClick={handleSearch}>Search</button>
         </div>
       </div>
       <div className="row-cols-1 row-cols-md-3 g-4">
-        {data?.hits?.map((item, index) => (
+        {data?.hits.map((item, index) => (
           <Card key={index} recipe={item.recipe} />
         ))}
       </div>

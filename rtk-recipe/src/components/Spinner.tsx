@@ -1,5 +1,5 @@
 const Spinner = () => {
-  return <div>Spinner</div>
+  return <div className="text-center mt-5">Loading...</div>
 }
 
 export default Spinner
