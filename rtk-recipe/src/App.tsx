@@ -3,6 +3,8 @@ import "./App.css"
 import { useGetRecipesMutation } from "./services/recipeApi"
 import Card from "./components/Card"
 import Spinner from "./components/Spinner"
+import { type Recipe } from "./types/recipe.type"
+import Modal from "./components/Modal"
 
 export type HealthValue =
   | "vegan"
@@ -79,6 +81,11 @@ export const App = () => {
     setHealth(e.target.value as HealthValue)
   }
 
+  const toggleShow = (recipes: Recipe) => {
+    setShow(!show)
+    setRecipes(recipes)
+  }
+
   return (
     <div
       className="App"
@@ -114,7 +121,7 @@ export const App = () => {
             className="categoryDropdown"
           >
             {options.map((option, index) => (
-              <option value={option.value || ""} key={index}>
+              <option value={option.value} key={index}>
                 {option.label}
               </option>
             ))}
@@ -123,9 +130,12 @@ export const App = () => {
       </div>
       <div className="row-cols-1 row-cols-md-3 g-4">
         {data?.hits.map((item, index) => (
-          <Card key={index} recipe={item.recipe} />
+          <Card key={index} toggleShow={toggleShow} recipe={item.recipe} />
         ))}
       </div>
+      {show && (
+        <Modal recipe={recipes as Recipe} setShow={setShow} show={show} />
+      )}
     </div>
   )
 }
